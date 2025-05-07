@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { GoogleGenerativeAI } from '@google/generative-ai'; 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Carica le variabili d'ambiente dal file .env
 dotenv.config();
@@ -11,6 +11,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000; // Porta su cui il server ascolterà
 
+// Configura il middleware CORS
+// Questo permette al tuo frontend (che probabilmente gira su un'origine diversa) di fare richieste al backend
 // Durante lo sviluppo, puoi permettere tutte le origini (*) ma in produzione dovresti specificare l'origine esatta del tuo frontend
 app.use(cors({
     origin: '*', // Permette richieste da qualsiasi origine. Per produzione, cambia in 'http://tuo-dominio.com'
@@ -44,36 +46,26 @@ app.post('/analyze-release-update', async (req, res) => {
 
     console.log('Prompt generato per Gemini:', prompt);
 
-
-    //  Inizializza il modello:
+    try {
+        //  Inizializza il modello:
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro"}); // O il modello che preferisci
-    //  Chiama l'API con un blocco try/catch:
-        try {
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
-            console.log('Risposta da Gemini:', text);
-            // Invia la risposta di Gemini al frontend
-            res.json({ analysis: text });
-        } catch (error) {
-            console.error('Errore nella chiamata a Gemini API:', error);
-            res.status(500).json({ error: 'Errore durante l\'analisi AI.' });
-        }
+        // Utilizza un modello che supporti gli strumenti se hai aggiunto la ricerca online al prompt
+        // const model = genAI.getGenerativeModel({ model: "gemini-pro", tools: [{ functionDeclarations: [...] }] }); // Esempio con tools
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"}); // Se non usi tool
 
-    // --- SEZIONE DI SIMULAZIONE (RIMUOVI QUANDO INTEGRI GEMINI) ---
-    // const simulatedResponse = `**Analisi AI per "${updateData['Release Update Name'] || 'Aggiornamento Sconosciuto'}"**\n\n` +
-    //                           `* **Punti Chiave:** Questo aggiornamento modifica la gestione di ${updateData['Badge'] || 'alcuni aspetti'}. I dettagli indicano che "${updateData['Detail'].substring(0, 150)}...".\n` +
-    //                           `* **Stato e Scadenza:** Attualmente è in stato "${updateData['Status']}" con scadenza il ${updateData['Due by Date'] || 'data non specificata'}.\n` +
-    //                           `* **Impatto Potenziale:** L'applicazione automatica è prevista per "${updateData['Enforcement'] || 'data non specificata'}". Potrebbe influenzare ${updateData['Badge'] || 'aree generiche'}.\n` +
-    //                           `* **Azioni Consigliate:** Si raccomanda di esaminare i dettagli completi. Test Run Disponibile: ${updateData['Test Run Avail']}. Utilizzare il test run per valutare l'impatto specifico sul proprio ambiente.`;
+        //  Chiama l'API di Gemini
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        console.log('Risposta da Gemini:', text);
+        // Invia la risposta di Gemini al frontend
+        res.json({ analysis: text });
 
-    //console.log('Risposta simulata:', simulatedResponse);
-    // Simula un ritardo di rete
-    // setTimeout(() => {
-    //     res.json({ analysis: simulatedResponse });
-    // }, 1500); // Simula un ritardo di 1.5 secondi
-    // --- FINE SEZIONE DI SIMULAZIONE ---
+    } catch (error) {
+        console.error('Errore nella chiamata a Gemini API:', error);
+        // Modificato per includere il messaggio di errore specifico nella risposta al frontend
+        res.status(500).json({ error: `Errore backend: ${error.message || error.toString() || 'Errore sconosciuto durante l\'analisi AI.'}` });
+    }
 
 });
 
