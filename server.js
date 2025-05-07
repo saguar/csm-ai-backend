@@ -51,7 +51,7 @@ app.post('/analyze-release-update', async (req, res) => {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         // Utilizza un modello che supporti gli strumenti se hai aggiunto la ricerca online al prompt
         // const model = genAI.getGenerativeModel({ model: "gemini-pro", tools: [{ functionDeclarations: [...] }] }); // Esempio con tools
-        const model = genAI.getGenerativeModel({ model: "gemini-pro"}); // Se non usi tool
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-04-17"}); // Se non usi tool
 
         //  Chiama l'API di Gemini
         const result = await model.generateContent(prompt);
