@@ -34,7 +34,7 @@ app.post('/analyze-release-update', async (req, res) => {
     }
 
     // Costruisci il prompt per Gemini
-    const prompt = `Analizza il seguente aggiornamento di Salesforce (effettua anche ricerche online se necessario) e fornisci un riassunto conciso dei suoi punti chiave, l'impatto potenziale e le azioni consigliate. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n` +
+    const prompt = `Analizza il seguente aggiornamento di Salesforce e fornisci un riassunto conciso dei suoi punti chiave, l'impatto potenziale e le azioni consigliate. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n` +
                    `Nome Aggiornamento: ${updateData['Release Update Name'] || 'N/A'}\n` +
                    `Stato: ${updateData['Status'] || 'N/A'}\n` +
                    `Data Scadenza: ${updateData['Due by Date'] || 'N/A'}\n` +
@@ -42,7 +42,7 @@ app.post('/analyze-release-update', async (req, res) => {
                    `Test Run Disponibile: ${updateData['Test Run Avail'] || 'N/A'}\n` +
                    `Dettagli: ${updateData['Detail'] || 'N/A'}\n` +
                    `Applicazione: ${updateData['Enforcement'] || 'N/A'}\n\n` +
-                   `Fornisci l'analisi in italiano.`;
+                   `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi.`;
 
     console.log('Prompt generato per Gemini:', prompt);
 
@@ -50,8 +50,7 @@ app.post('/analyze-release-update', async (req, res) => {
         //  Inizializza il modello:
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         // Utilizza un modello che supporti gli strumenti se hai aggiunto la ricerca online al prompt
-        // const model = genAI.getGenerativeModel({ model: "gemini-pro", tools: [{ functionDeclarations: [...] }] }); // Esempio con tools
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-04-17"}); // Se non usi tool
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash"}); // Se non usi tool
 
         //  Chiama l'API di Gemini
         const result = await model.generateContent(prompt);
