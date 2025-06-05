@@ -63,7 +63,7 @@ app.post('/analyze-release-update', async (req, res) => {
     } catch (error) {
         console.error('Errore nella chiamata a Gemini API:', error);
         // Modificato per includere il messaggio di errore specifico nella risposta al frontend
-        res.status(500).json({ error: `Errore backend: ${error.message || error.toString() || 'Errore sconosciuto durante l\'analisi AI.'}` });
+        res.status(500).json({ error: `Errore backend: ${error.message || error.toString() || "Errore sconosciuto durante l'analisi AI."}` });
     }
 
 });
