@@ -68,8 +68,46 @@ app.post('/analyze-release-update', async (req, res) => {
 
 });
 
+// --- Endpoint per l'analisi dei Proactive Monitoring Alert con Gemini ---
+app.post('/analyze-prom-alerts', async (req, res) => {
+    console.log('Richiesta ricevuta per /analyze-prom-alerts');
+    const alertData = req.body; // I dati degli alert inviati dal frontend
+
+    if (!alertData) {
+        console.error('Dati dei Proactive Monitoring Alert mancanti nella richiesta.');
+        return res.status(400).json({ error: 'Dati dei Proactive Monitoring Alert mancanti.' });
+    }
+
+    // Costruisci il prompt per Gemini
+    const prompt = `Analizza i seguenti Proactive Monitoring Alert generati sulla organizzazione Salesforce del mio cliente, e produci un'analisi tecnica ed analitica sulla base di ciò che viene riportato. Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n${JSON.stringify(alertData, null, 2)}`;
+
+    console.log('Prompt generato per Gemini:', prompt);
+
+    try {
+        //  Inizializza il modello:
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        // Utilizza un modello che supporti gli strumenti se hai aggiunto la ricerca online al prompt
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-04-17"}); // Se non usi tool
+
+        //  Chiama l'API di Gemini
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        console.log('Risposta da Gemini:', text);
+        // Invia la risposta di Gemini al frontend
+        res.json({ analysis: text });
+
+    } catch (error) {
+        console.error('Errore nella chiamata a Gemini API:', error);
+        // Modificato per includere il messaggio di errore specifico nella risposta al frontend
+        res.status(500).json({ error: `Errore backend: ${error.message || error.toString() || "Errore sconosciuto durante l'analisi AI."}` });
+    }
+
+});
+
 // --- Avvia il server ---
 app.listen(port, () => {
     console.log(`Server backend in ascolto su http://localhost:${port}`);
     console.log(`Endpoint per l'analisi AI: POST http://localhost:${port}/analyze-release-update`);
+    console.log(`Endpoint per l'analisi Proactive Monitoring: POST http://localhost:${port}/analyze-prom-alerts`);
 });
