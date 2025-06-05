@@ -71,5 +71,5 @@ app.post('/analyze-release-update', async (req, res) => {
 // --- Avvia il server ---
 app.listen(port, () => {
     console.log(`Server backend in ascolto su http://localhost:${port}`);
-    console.log('Endpoint per l\'analisi AI: POST http://localhost:3000/analyze-release-update');
+    console.log(`Endpoint per l'analisi AI: POST http://localhost:${port}/analyze-release-update`);
 });
