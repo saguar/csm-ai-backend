@@ -43,16 +43,17 @@ app.post('/analyze-release-update', async (req, res) => {
     }
 
     // Costruisci il prompt per Gemini
-    const prompt = `Analizza il seguente aggiornamento di Salesforce e fornisci un riassunto conciso dei suoi punti chiave, l'impatto potenziale e le azioni consigliate. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n` +
-                    ${csmPersona}+
-                   `Nome Aggiornamento: ${updateData['Release Update Name'] || 'N/A'}\n` +
-                   `Stato: ${updateData['Status'] || 'N/A'}\n` +
-                   `Data Scadenza: ${updateData['Due by Date'] || 'N/A'}\n` +
-                   `Badge: ${updateData['Badge'] || 'N/A'}\n` +
-                   `Test Run Disponibile: ${updateData['Test Run Avail'] || 'N/A'}\n` +
-                   `Dettagli: ${updateData['Detail'] || 'N/A'}\n` +
-                   `Applicazione: ${updateData['Enforcement'] || 'N/A'}\n\n` +
-                   `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi.`;
+    const prompt =
+        `Analizza il seguente aggiornamento di Salesforce e fornisci un riassunto conciso dei suoi punti chiave, l'impatto potenziale e le azioni consigliate. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n` +
+        csmPersona +
+        `Nome Aggiornamento: ${updateData['Release Update Name'] || 'N/A'}\n` +
+        `Stato: ${updateData['Status'] || 'N/A'}\n` +
+        `Data Scadenza: ${updateData['Due by Date'] || 'N/A'}\n` +
+        `Badge: ${updateData['Badge'] || 'N/A'}\n` +
+        `Test Run Disponibile: ${updateData['Test Run Avail'] || 'N/A'}\n` +
+        `Dettagli: ${updateData['Detail'] || 'N/A'}\n` +
+        `Applicazione: ${updateData['Enforcement'] || 'N/A'}\n\n` +
+        `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi.`;
 
     console.log('Prompt generato per Gemini:', prompt);
 
@@ -89,9 +90,10 @@ app.post('/analyze-prom-alerts', async (req, res) => {
     }
 
     // Costruisci il prompt per Gemini
-    const prompt = `Analizza i seguenti Proactive Monitoring Alert generati sulla organizzazione Salesforce del mio cliente, e produci un'analisi tecnica ed analitica sulla base di ciò che viene riportato.\n\n` +
-    ${csmPersona}+
-    `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n${JSON.stringify(alertData, null, 2)}`;
+    const prompt =
+        `Analizza i seguenti Proactive Monitoring Alert generati sulla organizzazione Salesforce del mio cliente, e produci un'analisi tecnica ed analitica sulla base di ciò che viene riportato.\n\n` +
+        csmPersona +
+        `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n${JSON.stringify(alertData, null, 2)}`;
 
     console.log('Prompt generato per Gemini:', prompt);
 
