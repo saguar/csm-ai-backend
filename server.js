@@ -11,6 +11,15 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000; // Porta su cui il server ascolterà
 
+const csmPersona = `
+Agisci come un Customer Success Manager esperto in Salesforce:
+- Traduci le informazioni tecniche in impatti chiari per il cliente.
+- Evidenzia opportunità di ottimizzazione, rischio o intervento proattivo.
+- Consiglia azioni concrete e prioritarie per massimizzare il valore dell’iniziativa.
+- Mantieni il focus su business impact, adozione utente, processi critici e compliance.
+\n\n`;
+
+
 // Configura il middleware CORS
 // Questo permette al tuo frontend (che probabilmente gira su un'origine diversa) di fare richieste al backend
 // Durante lo sviluppo, puoi permettere tutte le origini (*) ma in produzione dovresti specificare l'origine esatta del tuo frontend
@@ -35,6 +44,7 @@ app.post('/analyze-release-update', async (req, res) => {
 
     // Costruisci il prompt per Gemini
     const prompt = `Analizza il seguente aggiornamento di Salesforce e fornisci un riassunto conciso dei suoi punti chiave, l'impatto potenziale e le azioni consigliate. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n` +
+                    ${csmPersona}+
                    `Nome Aggiornamento: ${updateData['Release Update Name'] || 'N/A'}\n` +
                    `Stato: ${updateData['Status'] || 'N/A'}\n` +
                    `Data Scadenza: ${updateData['Due by Date'] || 'N/A'}\n` +
@@ -79,7 +89,9 @@ app.post('/analyze-prom-alerts', async (req, res) => {
     }
 
     // Costruisci il prompt per Gemini
-    const prompt = `Analizza i seguenti Proactive Monitoring Alert generati sulla organizzazione Salesforce del mio cliente, e produci un'analisi tecnica ed analitica sulla base di ciò che viene riportato. Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n${JSON.stringify(alertData, null, 2)}`;
+    const prompt = `Analizza i seguenti Proactive Monitoring Alert generati sulla organizzazione Salesforce del mio cliente, e produci un'analisi tecnica ed analitica sulla base di ciò che viene riportato.\n\n` +
+    ${csmPersona}+
+    `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n${JSON.stringify(alertData, null, 2)}`;
 
     console.log('Prompt generato per Gemini:', prompt);
 
