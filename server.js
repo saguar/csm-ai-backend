@@ -79,6 +79,47 @@ app.post('/analyze-release-update', async (req, res) => {
 
 });
 
+// --- Endpoint per l'analisi dell'adoption delle licenze con Gemini ---
+app.post('/analyze-license-adoption', async (req, res) => {
+    console.log('Richiesta ricevuta per /analyze-license-adoption');
+    const licenseData = req.body; // I dati di adoption licenze inviati dal frontend
+
+    if (!licenseData) {
+        console.error('Dati di license adoption mancanti nella richiesta.');
+        return res.status(400).json({ error: 'Dati di license adoption mancanti.' });
+    }
+
+    // Costruisci il prompt per Gemini
+    const prompt =
+        `Analizza i seguenti dati di adozione delle licenze Salesforce e fornisci un riassunto conciso dei punti chiave, l'impatto potenziale e le azioni consigliate. Formatta la risposta in Markdown per una migliore leggibilità (usa grassetti, elenchi, ecc.).\n\n` +
+        csmPersona +
+        `${JSON.stringify(licenseData, null, 2)}\n\n` +
+        `Fornisci l'analisi in lingua inglese, effettua anche ricerche online se necessario e riporta ogni link o referenza che analizzi.`;
+
+    console.log('Prompt generato per Gemini:', prompt);
+
+    try {
+        //  Inizializza il modello:
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        // Utilizza un modello che supporti gli strumenti se hai aggiunto la ricerca online al prompt
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-04-17"}); // Se non usi tool
+
+        //  Chiama l'API di Gemini
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        console.log('Risposta da Gemini:', text);
+        // Invia la risposta di Gemini al frontend
+        res.json({ analysis: text });
+
+    } catch (error) {
+        console.error('Errore nella chiamata a Gemini API:', error);
+        // Modificato per includere il messaggio di errore specifico nella risposta al frontend
+        res.status(500).json({ error: `Errore backend: ${error.message || error.toString() || "Errore sconosciuto durante l'analisi AI."}` });
+    }
+
+});
+
 // --- Endpoint per l'analisi dei Proactive Monitoring Alert con Gemini ---
 app.post('/analyze-prom-alerts', async (req, res) => {
     console.log('Richiesta ricevuta per /analyze-prom-alerts');
@@ -123,5 +164,6 @@ app.post('/analyze-prom-alerts', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server backend in ascolto su http://localhost:${port}`);
     console.log(`Endpoint per l'analisi AI: POST http://localhost:${port}/analyze-release-update`);
+    console.log(`Endpoint per l'analisi License Adoption: POST http://localhost:${port}/analyze-license-adoption`);
     console.log(`Endpoint per l'analisi Proactive Monitoring: POST http://localhost:${port}/analyze-prom-alerts`);
 });
