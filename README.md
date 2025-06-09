@@ -1,6 +1,6 @@
 # CSM AI Backend
 
-This backend uses the Gemini API to analyze release updates and Proactive Monitoring alerts.
+This backend uses the Gemini API to analyze release updates, license adoption data and Proactive Monitoring alerts.
 
 ## Setting up `GEMINI_API_KEY`
 
