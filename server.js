@@ -174,10 +174,14 @@ app.post('/analyze-prom-alerts', async (req, res) => {
 
 });
 
-// --- Avvia il server ---
-app.listen(port, () => {
-    console.log(`Server backend in ascolto su http://localhost:${port}`);
-    console.log(`Endpoint per l'analisi AI: POST http://localhost:${port}/analyze-release-update`);
-    console.log(`Endpoint per l'analisi License Adoption: POST http://localhost:${port}/analyze-license-adoption`);
-    console.log(`Endpoint per l'analisi Proactive Monitoring: POST http://localhost:${port}/analyze-prom-alerts`);
-});
+// --- Avvia il server se non in modalità test ---
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+        console.log(`Server backend in ascolto su http://localhost:${port}`);
+        console.log(`Endpoint per l'analisi AI: POST http://localhost:${port}/analyze-release-update`);
+        console.log(`Endpoint per l'analisi License Adoption: POST http://localhost:${port}/analyze-license-adoption`);
+        console.log(`Endpoint per l'analisi Proactive Monitoring: POST http://localhost:${port}/analyze-prom-alerts`);
+    });
+}
+
+export default app;
