@@ -7,6 +7,12 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Carica le variabili d'ambiente dal file .env
 dotenv.config();
 
+// Ensure the Gemini API key is available before starting the server
+if (!process.env.GEMINI_API_KEY) {
+    console.error('GEMINI_API_KEY environment variable is missing.');
+    process.exit(1);
+}
+
 // Crea un'istanza dell'applicazione Express
 const app = express();
 const port = process.env.PORT || 3000; // Porta su cui il server ascolterà
