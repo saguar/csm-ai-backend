@@ -29,8 +29,11 @@ Agisci come un Customer Success Manager esperto in Salesforce:
 // Configura il middleware CORS
 // Questo permette al tuo frontend (che probabilmente gira su un'origine diversa) di fare richieste al backend
 // Durante lo sviluppo, puoi permettere tutte le origini (*) ma in produzione dovresti specificare l'origine esatta del tuo frontend
+// L'origine consentita può essere configurata tramite la variabile d'ambiente CORS_ORIGIN
+// Se non specificata, è consentita qualunque origine
+const allowedOrigin = process.env.CORS_ORIGIN || '*';
 app.use(cors({
-    origin: '*', // Permette richieste da qualsiasi origine. Per produzione, cambia in 'http://tuo-dominio.com'
+    origin: allowedOrigin,
     methods: ['GET', 'POST'], // Permette solo i metodi GET e POST
     allowedHeaders: ['Content-Type'] // Permette solo l'header Content-Type
 }));
