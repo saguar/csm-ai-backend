@@ -38,6 +38,11 @@ app.use(cors({
 // Middleware per parsare il corpo delle richieste in formato JSON
 app.use(express.json());
 
+// Endpoint di salute
+app.get('/', (req, res) => {
+    res.json({ status: 'ok' });
+});
+
 // --- Endpoint per l'analisi con Gemini ---
 app.post('/analyze-release-update', async (req, res) => {
     console.log('Richiesta ricevuta per /analyze-release-update');
