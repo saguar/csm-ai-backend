@@ -2,6 +2,27 @@
 
 This backend uses the Gemini API to analyze release updates, license adoption data and Proactive Monitoring alerts.
 
+## Usage
+
+Install dependencies and start the server:
+
+```bash
+npm install
+npm start
+```
+
+By default the application listens on port `3000`. You can verify it is running by hitting the health endpoint:
+
+```bash
+curl http://localhost:3000/
+```
+
+It should respond with:
+
+```json
+{"status":"ok"}
+```
+
 ## Setting up `GEMINI_API_KEY`
 
 A valid API key is required for the Gemini API calls. You can provide it in two ways:
