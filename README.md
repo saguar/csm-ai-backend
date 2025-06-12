@@ -49,3 +49,15 @@ heroku config:set GEMINI_API_KEY=your_key
 Heroku will make the variable available to the application at runtime.
 
 Once the variable is set, the application can call the Gemini API.
+
+## Configuring CORS
+
+The allowed origin for CORS requests can be customized using the `CORS_ORIGIN` environment variable. If not provided, all origins are allowed (`"*"`).
+
+Example `.env` entry:
+
+```env
+CORS_ORIGIN=http://example.com
+```
+
+Set this variable to the URL of your frontend when deploying to production.
